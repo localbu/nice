@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "26193149979",
+    "project_id": "uecommers-1b756",
+    "storage_bucket": "uecommers-1b756.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:26193149979:android:d93e9418f2cba878f638be",
+        "android_client_info": {
+          "package_name": "com.azzam.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDUZZt5Te1fiYjO0vot9d4tPOmEqpDSCk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

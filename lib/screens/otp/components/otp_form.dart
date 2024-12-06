@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ui_ecommerce/components/my_default_button.dart';
 import 'package:ui_ecommerce/constant.dart';
-import 'package:ui_ecommerce/screens/home/home_screen.dart';
+import 'package:ui_ecommerce/main_screen.dart';
 import 'package:ui_ecommerce/size_config.dart';
 
 class OtpForm extends StatefulWidget {
@@ -10,112 +11,92 @@ class OtpForm extends StatefulWidget {
   });
 
   @override
-  _OtpFormState createState() => _OtpFormState();
+  State<OtpForm> createState() => _OtpFormState();
 }
 
 class _OtpFormState extends State<OtpForm> {
-  FocusNode? pin2FocusNode;
-  FocusNode? pin3FocusNode;
-  FocusNode? pin4FocusNode;
+  final _formKey = GlobalKey<FormState>();
 
-  @override
-  void initState() {
-    super.initState();
-    pin2FocusNode = FocusNode();
-    pin3FocusNode = FocusNode();
-    pin4FocusNode = FocusNode();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    pin2FocusNode!.dispose();
-    pin3FocusNode!.dispose();
-    pin4FocusNode!.dispose();
-  }
-
-  void nextField(String value, FocusNode? focusNode) {
-    if (value.length == 1) {
-      focusNode!.requestFocus();
-    } else if (value.isEmpty) {
-      FocusScope.of(context).previousFocus();
-    }
-  }
+  final List<String?> otp = List.filled(4, null); 
 
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: _formKey,
       child: Column(
         children: [
-          SizedBox(height: SizeConfig.screenHeight * 0.03),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                width: getProportionateScreenWidth(60),
-                child: TextFormField(
-                  autofocus: true,
-                  obscureText: true,
-                  style: const TextStyle(fontSize: 24),
-                  keyboardType: TextInputType.number,
-                  textAlign: TextAlign.center,
-                  decoration: otpInputDecoration,
-                  onChanged: (value) {
-                    nextField(value, pin2FocusNode);
-                  },
-                ),
-              ),
-              SizedBox(
-                width: getProportionateScreenWidth(60),
-                child: TextFormField(
-                  focusNode: pin2FocusNode,
-                  obscureText: true,
-                  style: const TextStyle(fontSize: 24),
-                  keyboardType: TextInputType.number,
-                  textAlign: TextAlign.center,
-                  decoration: otpInputDecoration,
-                  onChanged: (value) => nextField(value, pin3FocusNode),
-                ),
-              ),
-              SizedBox(
-                width: getProportionateScreenWidth(60),
-                child: TextFormField(
-                  focusNode: pin3FocusNode,
-                  obscureText: true,
-                  style: const TextStyle(fontSize: 24),
-                  keyboardType: TextInputType.number,
-                  textAlign: TextAlign.center,
-                  decoration: otpInputDecoration,
-                  onChanged: (value) => nextField(value, pin4FocusNode),
-                ),
-              ),
-              SizedBox(
-                width: getProportionateScreenWidth(60),
-                child: TextFormField(
-                  focusNode: pin4FocusNode,
-                  obscureText: true,
-                  style: const TextStyle(fontSize: 24),
-                  keyboardType: TextInputType.number,
-                  textAlign: TextAlign.center,
-                  decoration: otpInputDecoration,
-                  onChanged: (value) {
-                    if (value.length == 1) {
-                      pin4FocusNode!.unfocus();
-                    } else if (value.isEmpty) {
-                      FocusScope.of(context).previousFocus();
-                    }
-                  },
-                ),
-              ),
-            ],
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: List.generate(otp.length,
+                (index) => OtpField(index: index, otp: otp)),
           ),
           SizedBox(height: SizeConfig.screenHeight * 0.15),
           MyDefaultButton(
-              text: "Continue",
-              press: () {
-                Navigator.pushNamed(context, HomeScreen.routeName);
-              })
+            text: "Continue", 
+            press: () {
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                print("${otp.join()}");
+              }
+
+              if (otp.isNotEmpty) {
+                Navigator.pushNamed(context, MainScreen.routeName);
+              }
+            }
+          )
         ],
+      ),
+    );
+  }
+}
+
+class OtpField extends StatefulWidget {
+  const OtpField({
+    super.key, required this.index, required this.otp,
+  });
+
+  final int index;
+  final List<String?> otp;
+
+  @override
+  State<OtpField> createState() => _OtpFieldState();
+}
+
+class _OtpFieldState extends State<OtpField> {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: getPropScreenWidth(60),
+      child: TextFormField(
+        onSaved: (newValue) => setState(() => widget.otp[widget.index] = newValue),
+        onChanged: (value) {
+            if (value.isEmpty) {
+            widget.index > 0
+                ? FocusScope.of(context).previousFocus()
+                : FocusScope.of(context)
+                    .requestFocus(FocusScope.of(context).focusedChild);
+          } else {
+            widget.index == widget.otp.length - 1
+                ? FocusScope.of(context).unfocus()
+                : FocusScope.of(context).nextFocus();
+          }
+        },
+        validator: (value) {
+          if (value!.isEmpty) {
+            return "";
+          }
+          return null;
+        },
+        keyboardType: TextInputType.number,
+        obscureText: true,
+        maxLength: 1,
+        maxLengthEnforcement: MaxLengthEnforcement.enforced,
+        buildCounter: (context, {required currentLength, required isFocused, required maxLength}) {
+          return null;
+        },
+        style: TextStyle(fontSize: getPropScreenWidth(24)),
+        textAlign: TextAlign.center,
+        decoration: otpDecoration,
       ),
     );
   }

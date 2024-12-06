@@ -15,10 +15,11 @@ class SignUpForm extends StatefulWidget {
 
 class _SignUpFormState extends State<SignUpForm> {
   String? email;
-  String? password;
-  String? confirmPassword;
+  String? password;  
+  String? confirmPassword;  
+
   final _formKey = GlobalKey<FormState>();
-  final List<String> errors = [];
+  List<String> errors = [];
 
   @override
   Widget build(BuildContext context) {
@@ -27,26 +28,58 @@ class _SignUpFormState extends State<SignUpForm> {
       child: Column(
         children: [
           emailFormField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
+          SizedBox(height: getPropScreenHeight(30)),
           passwordFormField(),
-          SizedBox(height: getProportionateScreenHeight(30)),
+          SizedBox(height: getPropScreenHeight(30)),
           passwordConfirmationFormField(),
-          SizedBox(height: getProportionateScreenHeight(20)),
+          SizedBox(height: getPropScreenHeight(20)),
           ErrorForm(errors: errors),
-          SizedBox(height: getProportionateScreenHeight(20)),
+          SizedBox(height: getPropScreenHeight(20)),
           MyDefaultButton(
             text: "Continue",
             press: () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
               }
+
               if (errors.isEmpty) {
                 Navigator.pushNamed(context, CompleteProfileScreen.routeName);
               }
-            },
+            }
           ),
-        ],
+        ]
       ),
+    );
+  }
+
+  TextFormField passwordConfirmationFormField() {
+    return TextFormField(
+      onSaved: (newValue) => confirmPassword = newValue,
+      onChanged: (value) {
+        if (password == value) {
+          setState(() {
+            errors.remove(kMatchPassError);
+          });
+        } 
+      },
+      validator: (value) {
+        if (value!.isEmpty || errors.contains(kMatchPassError)) {
+          return "";
+        } else if (value != password) {
+          setState(() {
+            errors.add(kMatchPassError);
+          });
+        } 
+        return null;
+      },
+      obscureText: true,
+      decoration: const InputDecoration(
+          labelText: "Password Confirmation",
+          hintText: "Re-enter your password",
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          suffixIcon: CustomSuffixIcon(
+            icon: "assets/icons/Lock.svg",
+          )),
     );
   }
 
@@ -66,6 +99,7 @@ class _SignUpFormState extends State<SignUpForm> {
             errors.remove(kShortPassError);
           });
         }
+        return;
       },
       validator: (value) {
         if (value!.isEmpty && !errors.contains(kPassNullError)) {
@@ -73,9 +107,7 @@ class _SignUpFormState extends State<SignUpForm> {
             errors.add(kPassNullError);
           });
           return "";
-        } else if (value.length < 8 &&
-            (!errors.contains(kShortPassError) &&
-                !errors.contains(kPassNullError))) {
+        }  else if (value.length < 8 && (!errors.contains(kShortPassError) && !errors.contains(kPassNullError))) {
           setState(() {
             errors.add(kShortPassError);
           });
@@ -85,89 +117,55 @@ class _SignUpFormState extends State<SignUpForm> {
       },
       obscureText: true,
       decoration: const InputDecoration(
-        labelText: "Password",
-        hintText: "Enter Your Password",
-        suffixIcon: CustomSuffixIcon(
-          icon: "assets/icons/Lock.svg", size: 14,
-        ),
-        floatingLabelBehavior: FloatingLabelBehavior.always,
-      ),
-    );
-  }
-
-  TextFormField passwordConfirmationFormField() {
-    return TextFormField(
-      onSaved: (newValue) => confirmPassword = newValue,
-      onChanged: (value) {
-        if (password == value){
-          setState(() {
-            errors.remove(kMatchPassError);
-          });
-        }
-      },
-
-      validator: (value) {
-        if (value!.isEmpty || errors.contains(kMatchPassError)) {
-          return "";
-          }else if(value != password){
-            setState(() {
-              errors.add(kMatchPassError);
-            });
-          }
-        return null;
-      },
-      obscureText: true,
-      decoration: const InputDecoration(
-        labelText: "Password Confirmation",
-        hintText: "Confirm Your Password",
-        suffixIcon: CustomSuffixIcon(
-          icon: "assets/icons/Lock.svg", size: 14,
-        ),
-        floatingLabelBehavior: FloatingLabelBehavior.always,
-      ),
+          labelText: "Password",
+          hintText: "Your password here",
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          suffixIcon: CustomSuffixIcon(
+            icon: "assets/icons/Lock.svg",
+          )),
     );
   }
 
   TextFormField emailFormField() {
     return TextFormField(
-      onSaved: (newValue) => email = newValue,
-      onChanged: (value) {
-        if (value.isNotEmpty && errors.contains(kEmailNullError)) {
-          setState(() {
-            errors.remove(kEmailNullError);
-          });
-        } else if (emailValidatorRegExp.hasMatch(value) &&
-            errors.contains(kInvalidEmailError)) {
-          setState(() {
-            errors.remove(kInvalidEmailError);
-          });
-        }
-      },
-      validator: (value) {
-        if (value!.isEmpty && !errors.contains(kEmailNullError)) {
-          setState(() {
-            errors.add(kEmailNullError);
-          });
-          return "";
-        } else if (!emailValidatorRegExp.hasMatch(value) &&
-            (!errors.contains(kPassNullError)) &&
-            !errors.contains(kInvalidEmailError)) {
-          setState(() {
-            errors.add(kInvalidEmailError);
-          });
-          return "";
-        }
-        return null;
-      },
-      keyboardType: TextInputType.emailAddress,
-      decoration: const InputDecoration(
-        labelText: "Email",
-        hintText: "Enter Your Email",
-        suffixIcon: CustomSuffixIcon(
-          icon: "assets/icons/Mail.svg", size: 14,
-        ),
-        floatingLabelBehavior: FloatingLabelBehavior.always,
-      ),
-    );
+        onSaved: (newValue) => email = newValue,
+        onChanged: (value) {
+          if (value.isNotEmpty && errors.contains(kEmailNullError)) {
+            setState(() {
+              errors.remove(kEmailNullError);
+            });
+          } else if (emailValidatorRegExp.hasMatch(value) &&
+              errors.contains(kInvalidEmailError)) {
+            setState(() {
+              errors.remove(kInvalidEmailError);
+            });
+          }
+          return;
+        },
+        validator: (value) {
+          if (value!.isEmpty && !errors.contains(kEmailNullError)) {
+            setState(() {
+              errors.add(kEmailNullError);
+            });
+            return "";
+          } else if (!emailValidatorRegExp.hasMatch(value) &&
+              (!errors.contains(kPassNullError) &&
+                  !errors.contains(kInvalidEmailError))) {
+            setState(() {
+              errors.add(kInvalidEmailError);
+            });
+            return "";
+          }
+          return null;
+        },
+        keyboardType: TextInputType.emailAddress,
+        decoration: const InputDecoration(
+            labelText: "Email",
+            hintText: "Your email here",
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            suffixIcon: CustomSuffixIcon(
+              icon: "assets/icons/Mail.svg",
+            )),
+      );
   }
 }

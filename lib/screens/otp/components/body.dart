@@ -8,53 +8,49 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: Padding(
-        padding:
-            EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
-        child: Column(
-          children: [
-            SizedBox(
-              height: SizeConfig.screenHeight * 0.03,
-            ),
-            Text(
-              "OTP Verification",
-              style: headingStyle,
-            ),
-            const Text(
-              'We Send Your Code to Your Number',
-              textAlign: TextAlign.center,
-            ),
-            timer(),
-            SizedBox(
-              height: SizeConfig.screenHeight * 0.15,
-            ),
-           OtpForm()
-          ],
-        ),
+    return SingleChildScrollView(
+      child: SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: getPropScreenWidth(20)),
+          child: Column(
+            children: [
+                SizedBox(height: SizeConfig.screenHeight * 0.03),
+                Text(
+                  "OTP Verification",
+                  style: headingStyle,
+                ),
+                const Text(
+                  "We sent your code to +62 123 321 ***",
+                  textAlign: TextAlign.center,
+                ),
+                timer(),
+                SizedBox(height: SizeConfig.screenHeight * 0.15),
+                const OtpForm(),
+              ],
+          ),
+        )
       ),
     );
   }
+
 
   Row timer() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Text(
-          'This Code will expires in ',
+          "This code will expired in ",
           textAlign: TextAlign.center,
         ),
         TweenAnimationBuilder(
-          tween: Tween(begin: 60.0, end: 0),
+          tween: Tween(begin: 60.0, end: 0.0),
           duration: const Duration(seconds: 60),
           builder: (context, value, child) {
             return Text(
               "00:${value.toInt()}",
               style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: kPrimaryColor,
-              ),
+                  fontWeight: FontWeight.bold, color: Colors.red),
             );
           },
           onEnd: () {},
@@ -63,5 +59,4 @@ class Body extends StatelessWidget {
     );
   }
 }
-
 

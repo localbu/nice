@@ -4,13 +4,11 @@ import 'package:ui_ecommerce/size_config.dart';
 
 class MyDefaultButton extends StatelessWidget {
   const MyDefaultButton({
-    super.key,
-    required this.text,
-    required this.press,
+    super.key, required this.text, required this.press,
   });
 
   final String text;
-  final VoidCallback press;
+  final VoidCallback? press;
 
   @override
   Widget build(BuildContext context) {
@@ -18,17 +16,17 @@ class MyDefaultButton extends StatelessWidget {
       onPressed: press,
       style: ElevatedButton.styleFrom(
         backgroundColor: kPrimaryColor,
-        minimumSize: Size(double.infinity, getProportionateScreenHeight(55)),
+        minimumSize: Size(double.infinity, getPropScreenHeight(56)),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(20)
         ),
       ),
       child: Text(
-        text,
+        text, 
         style: TextStyle(
           color: Colors.white,
-          fontSize: getProportionateScreenWidth(20),
-        ),
+          fontSize: getPropScreenWidth(18),
+        )
       ),
     );
   }
